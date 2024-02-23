@@ -15,7 +15,7 @@ import {
 const Chart = ({ data }) => {
     return (
         <div className="w-full">
-            <h2 className="text-4xl font-semibold ml-10">
+            <h2 className="text-2xl sm:text-4xl font-semibold ml-10">
                 Energy Consumption(kwh)
             </h2>
             <ResponsiveContainer width="100%" aspect={2}>

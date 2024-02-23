@@ -10,6 +10,7 @@ import { Suspense, useState } from "react";
 
 export default function Home() {
     const [chartData, setChartData] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         fromDate: "",
         toDate: "",
@@ -17,7 +18,6 @@ export default function Home() {
         accessDate: "",
         employeeName: "",
     });
-    console.log(formData);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -30,6 +30,7 @@ export default function Home() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            setLoading(true);
             const response = await axios.post("/api/chartData", formData);
             const data = response.data.data;
 
@@ -41,88 +42,93 @@ export default function Home() {
                 return accumulator;
             }, []);
             setChartData(cleanupData);
-            setFormData({});
+            setFormData({
+                fromDate: "",
+                toDate: "",
+                accessTime: "",
+                accessDate: "",
+                employeeName: "",
+            });
         } catch (error) {
             console.log(error);
+        } finally {
+            setLoading(false);
         }
     };
     return (
-        <div>
-            <div className="w-full h-screen flex items-center justify-center space-y-4">
-                <div className="w-1/3 flex flex-col justify-center">
-                    <form
-                        onSubmit={handleSubmit}
-                        className="w-full max-w-xs mx-auto"
-                    >
-                        <div className="mb-4">
-                            <Label htmlFor="employeeName">Employee Name:</Label>
-                            <Input
-                                type="text"
-                                id="employeeName"
-                                name="employeeName"
-                                value={formData.employeeName}
-                                onChange={handleChange}
-                                placeholder="Enter your name"
-                                required
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <Label htmlFor="accessTime">Access Time:</Label>
-                            <Input
-                                type="time"
-                                id="accessTime"
-                                name="accessTime"
-                                value={formData.accessTime}
-                                onChange={handleChange}
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <Label htmlFor="accessDate">Access Date:</Label>
-                            <Input
-                                type="date"
-                                id="accessDate"
-                                name="accessDate"
-                                value={formData.accessDate}
-                                onChange={handleChange}
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <Label htmlFor="fromDate">Date Range:</Label>
-                            <div className="flex gap-2">
-                                <div>
-                                    <Label htmlFor="fromDate">From:</Label>
-                                    <Input
-                                        type="date"
-                                        id="fromDate"
-                                        name="fromDate"
-                                        value={formData.fromDate}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <Label htmlFor="toDate">To:</Label>
-                                    <Input
-                                        type="date"
-                                        id="toDate"
-                                        name="toDate"
-                                        value={formData.toDate}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </div>
+        <div className="grid md:grid-cols-12 gap-3 m-4 mt-10">
+            <div className="md:col-span-4 flex flex-col justify-center mb-10">
+                <form onSubmit={handleSubmit} className="max-w-xs mx-auto">
+                    <div className="mb-4">
+                        <Label htmlFor="employeeName">Employee Name:</Label>
+                        <Input
+                            type="text"
+                            id="employeeName"
+                            name="employeeName"
+                            value={formData.employeeName}
+                            onChange={handleChange}
+                            placeholder="Enter your name"
+                            required
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <Label htmlFor="accessTime">Access Time:</Label>
+                        <Input
+                            type="time"
+                            id="accessTime"
+                            name="accessTime"
+                            value={formData.accessTime}
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <Label htmlFor="accessDate">Access Date:</Label>
+                        <Input
+                            type="date"
+                            id="accessDate"
+                            name="accessDate"
+                            value={formData.accessDate}
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <Label htmlFor="fromDate">Date Range:</Label>
+                        <div className="flex gap-2">
+                            <div>
+                                <Label htmlFor="fromDate">From:</Label>
+                                <Input
+                                    type="date"
+                                    id="fromDate"
+                                    name="fromDate"
+                                    value={formData.fromDate}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <Label htmlFor="toDate">To:</Label>
+                                <Input
+                                    type="date"
+                                    id="toDate"
+                                    name="toDate"
+                                    value={formData.toDate}
+                                    onChange={handleChange}
+                                    required
+                                />
                             </div>
                         </div>
-                        <Button type="submit">Submit</Button>
-                    </form>
-                </div>
-                <div className="w-2/3 h-screen flex justify-center items-center">
-                    <Suspense fallback={<p>Loading Data...</p>}>
-                        <Chart data={chartData} />
-                    </Suspense>
-                </div>
+                    </div>
+                    <Button type="submit" disabled={loading ? true : false}>
+                        Submit
+                    </Button>
+                </form>
             </div>
-            <div className="rounded-md border border-black w-2/5 max-h-[500px] m-10 overflow-y-scroll">
+            <div className="md:col-span-8">
+                <Suspense fallback={<p>Loading Data...</p>}>
+                    <Chart data={chartData} />
+                </Suspense>
+            </div>
+            <div className="rounded-md border border-black md:col-span-6 mt-10 max-h-[500px] overflow-y-scroll">
                 <h2 className="pl-4 pt-4 font-semibold">Recent Logs</h2>
                 <div>
                     <Log />

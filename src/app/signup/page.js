@@ -31,7 +31,7 @@ const SignupPage = () => {
         }
     };
     return (
-        <div className="relative w-[400px] h-screen  flex flex-col items-center justify-center mx-auto">
+        <div className="relative max-w-[400px] min-h-[85vh] p-3  flex flex-col items-center justify-center mx-auto">
             <form
                 onSubmit={handleSignup}
                 className="w-full border-2 border-black p-10 rounded-2xl space-y-6"
@@ -78,7 +78,9 @@ const SignupPage = () => {
                         required
                     />
                 </div>
-                <Button type="submit">Sign Up</Button>
+                <Button type="submit" disabled={loading ? true : false}>
+                    Sign Up
+                </Button>
                 <div className="text-[0.9rem] text-center font-medium mt-6 mb-[10px]">
                     <p>
                         Already have an account?{" "}
